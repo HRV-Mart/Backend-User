@@ -39,7 +39,7 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: |
-            harsh3305/hrv-mart-backend
+            harsh3305/hrv-mart-backend-user
             ghcr.io/${{ github.repository }}
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
