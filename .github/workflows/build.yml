@@ -34,4 +34,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: java-app
-          path: './build/libs/HRV-Mart-Backend-0.0.1-SNAPSHOT.jar'
+          path: './build/libs/User-0.0.1-SNAPSHOT.jar'
