@@ -56,4 +56,7 @@ class UserController (
                 response.statusCode = HttpStatus.NOT_FOUND
                 return@onErrorResume Mono.empty()
             }
+            .switchIfEmpty {
+                Mono.just("User not found")
+            }
 }
