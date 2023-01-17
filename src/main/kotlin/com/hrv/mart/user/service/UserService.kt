@@ -16,5 +16,8 @@ class UserService (
     fun getUser(id: String) =
         userRepository.findById(id)
     fun updateUser(user: User) =
-        userRepository.save(user)
+        getUser(user.emailId)
+            .flatMap {
+                userRepository.save(user)
+            }
 }

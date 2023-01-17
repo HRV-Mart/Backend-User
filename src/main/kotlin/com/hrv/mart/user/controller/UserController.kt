@@ -42,4 +42,11 @@ class UserController (
                 response.statusCode = HttpStatus.NOT_FOUND
                 Mono.empty()
             }
+    @PutMapping
+    fun updateUser(@RequestBody user: User, response: ServerHttpResponse) =
+        userService.updateUser(user)
+            .switchIfEmpty {
+                response.statusCode = HttpStatus.NOT_FOUND
+                Mono.empty()
+            }
 }
