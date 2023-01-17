@@ -49,4 +49,11 @@ class UserController (
                 response.statusCode = HttpStatus.NOT_FOUND
                 Mono.empty()
             }
+    @DeleteMapping("/{userId}")
+    fun deleteUser(@PathVariable userId: String, response: ServerHttpResponse) =
+        userService.deleteUser(userId)
+            .onErrorResume {
+                response.statusCode = HttpStatus.NOT_FOUND
+                return@onErrorResume Mono.empty()
+            }
 }
