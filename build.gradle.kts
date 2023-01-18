@@ -61,6 +61,6 @@ tasks.jacocoTestCoverageVerification {
 tasks.jacocoTestReport{
     reports {
         html.required.set(true)
+        generate()
     }
-    generate()
 }
