@@ -53,7 +53,7 @@ tasks.jacocoTestCoverageVerification {
                 "com.hrv.mart.user.repository.UserRepository.kt.*"
             )
             limit {
-                minimum = "0.8".toBigDecimal()
+                minimum = "0.9".toBigDecimal()
             }
         }
     }
