@@ -1,13 +1,17 @@
 name: Build Flow
 
 on:
-  push:
+  pull_request:
     branches:
       - '*'
+  push:
+    branches:
+      - 'master'
 env:
   MONGODB_URI: 'mongodb://localhost:27017'
   PORT: '8080'
-
+  USERNAME: ${{secrets.OSSRH_USERNAME}}
+  TOKEN: ${{secrets.OSSRH_TOKEN}}
 jobs:
   build:
     name: Build
@@ -31,8 +35,3 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
         run: gradle clean build
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: java-app
-          path: './build/libs/User-0.0.1-SNAPSHOT.jar'
