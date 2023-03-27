@@ -11,8 +11,14 @@ registries:
     username: ${{secrets.OSSRH_USERNAME}}
     password: ${{secrets.OSSRH_TOKEN}}
     replaces-base: true
+
 updates:
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/" # Location of package manifests
+    registries:
+      - maven-artifactory # Allow version updates for dependencies in this registry
     schedule:
       interval: "daily"
+    reviewers:
+      - "HRV-Mart/Backend"
+      - "Harsh3305"
