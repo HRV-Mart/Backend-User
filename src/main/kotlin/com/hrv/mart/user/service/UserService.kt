@@ -1,7 +1,7 @@
 package com.hrv.mart.user.service
 
-import com.hrv.mart.user.model.User
 import com.hrv.mart.user.repository.UserRepository
+import com.hrv.mart.userlibrary.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono

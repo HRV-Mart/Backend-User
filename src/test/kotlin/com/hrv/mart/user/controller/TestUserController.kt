@@ -1,6 +1,6 @@
 package com.hrv.mart.user.controller
 
-import com.hrv.mart.user.model.User
+import com.hrv.mart.userlibrary.User
 import com.hrv.mart.user.repository.UserRepository
 import com.hrv.mart.user.service.UserService
 import org.junit.jupiter.api.Test
