@@ -1,6 +1,6 @@
 package com.hrv.mart.user.repository
 
-import com.hrv.mart.user.model.User
+import com.hrv.mart.userlibrary.User
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 import org.springframework.stereotype.Repository
 
