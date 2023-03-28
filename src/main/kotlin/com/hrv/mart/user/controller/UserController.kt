@@ -52,11 +52,13 @@ class UserController (
                 response.statusCode = HttpStatus.NOT_FOUND
                 Mono.empty()
             }
-    @DeleteMapping("/{userId}")
-    fun deleteUser(@PathVariable userId: String, response: ServerHttpResponse) =
+    @KafkaListener(
+        topics = [UserTopics.deleteUserTopic],
+        groupId = "\${spring.kafka.consumer.group-id}"
+    )
+    fun deleteUser(@PathVariable userId: String) =
         userService.deleteUser(userId)
             .onErrorResume {
-                response.statusCode = HttpStatus.NOT_FOUND
                 return@onErrorResume Mono.empty()
             }
             .switchIfEmpty {
