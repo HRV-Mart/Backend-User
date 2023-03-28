@@ -38,7 +38,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     // User Model
-    implementation("com.hrv.mart:user-library:0.0.1")
+    implementation("com.hrv.mart:user-library:0.0.2")
+    // Kafka
+    implementation("org.springframework.kafka:spring-kafka")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
 tasks.withType<KotlinCompile> {
