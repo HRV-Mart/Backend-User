@@ -2,9 +2,11 @@ package com.hrv.mart.user.controller
 
 import com.hrv.mart.user.service.UserService
 import com.hrv.mart.userlibrary.User
+import com.hrv.mart.userlibrary.UserTopics
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpResponse
+import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
@@ -17,24 +19,25 @@ class UserController (
     private val userService: UserService
 )
 {
-    @PostMapping
-    fun createUser(@RequestBody user: User, response: ServerHttpResponse) =
+    @KafkaListener(
+        topics = [UserTopics.createUserTopic],
+        groupId = "\${spring.kafka.consumer.group-id}"
+    )
+    fun createUser(user: User) {
         userService.createUser(user)
             .hasElement()
             .map {
                 if (it) {
-                    response.statusCode = HttpStatus.OK
                     return@map "User Created successfully"
-                }
-                else {
-                    response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+                } else {
                     return@map "Something went wrong"
                 }
             }
-            .onErrorResume{
-                response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+            .onErrorResume {
                 return@onErrorResume Mono.just("Something went wrong")
             }
+            .block()
+    }
     @GetMapping("/{userId}")
     fun getUserById(@PathVariable userId: String, response: ServerHttpResponse) =
         userService.getUser(userId)
