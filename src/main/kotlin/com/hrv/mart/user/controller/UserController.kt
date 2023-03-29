@@ -1,8 +1,8 @@
 package com.hrv.mart.user.controller
 
 import com.hrv.mart.user.service.UserService
-import com.hrv.mart.userlibrary.User
-import com.hrv.mart.userlibrary.UserTopics
+import com.hrv.mart.userlibrary.model.User
+import com.hrv.mart.userlibrary.model.UserTopics
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpResponse
