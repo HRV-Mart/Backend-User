@@ -55,7 +55,7 @@ class UserController (
         topics = [UserTopics.deleteUserTopic],
         groupId = "\${spring.kafka.consumer.group-id}"
     )
-    fun deleteUser(@PathVariable userId: String) =
+    fun deleteUser(@PathVariable userId: String) {
         userService.deleteUser(userId)
             .onErrorResume {
                 return@onErrorResume Mono.empty()
@@ -63,4 +63,6 @@ class UserController (
             .switchIfEmpty {
                 Mono.just("User not found")
             }
+            .block()
+    }
 }
