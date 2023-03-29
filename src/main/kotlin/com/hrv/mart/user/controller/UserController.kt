@@ -1,14 +1,14 @@
 package com.hrv.mart.user.controller
 
 import com.hrv.mart.user.service.UserService
-import com.hrv.mart.userlibrary.User
-import com.hrv.mart.userlibrary.UserTopics
+import com.hrv.mart.userlibrary.model.User
+import com.hrv.mart.userlibrary.model.UserTopics
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.kafka.annotation.KafkaListener
+
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 
@@ -56,7 +56,7 @@ class UserController (
         topics = [UserTopics.deleteUserTopic],
         groupId = "\${spring.kafka.consumer.group-id}"
     )
-    fun deleteUser(@PathVariable userId: String) =
+    fun deleteUser(@PathVariable userId: String) {
         userService.deleteUser(userId)
             .onErrorResume {
                 return@onErrorResume Mono.empty()
@@ -64,4 +64,6 @@ class UserController (
             .switchIfEmpty {
                 Mono.just("User not found")
             }
+            .block()
+    }
 }
