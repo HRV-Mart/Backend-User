@@ -33,7 +33,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-//     to import formatting in config/detekt/detekt.yml
+    //import formatting in config/detekt/detekt.yml
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
@@ -42,6 +42,9 @@ dependencies {
     // Kafka
     implementation("org.springframework.kafka:spring-kafka")
     testImplementation("org.springframework.kafka:spring-kafka-test")
+    // Test-Container
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:mongodb")
 }
 
 tasks.withType<KotlinCompile> {
@@ -65,9 +68,9 @@ tasks.jacocoTestCoverageVerification {
             excludes = listOf(
                 "com.hrv.mart.user.repository.UserRepository.kt.*"
             )
-//            limit {
-//                minimum = "0.9".toBigDecimal()
-//            }
+            limit {
+                minimum = "0.9".toBigDecimal()
+            }
         }
     }
 }
