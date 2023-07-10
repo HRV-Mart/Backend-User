@@ -74,6 +74,17 @@ class TestUserController (
             .expectComplete()
             .verify()
     }
+    @Test
+    fun `should delete user if user exist`() {
+        userRepository
+            .insert(user)
+            .block()
+        userController
+            .deleteUser(user.emailId)
+        StepVerifier.create(userController.getUserById(user.emailId, response))
+            .expectComplete()
+            .verify()
+    }
     companion object {
         private lateinit var mongoDBContainer: MongoDBContainer
 
