@@ -85,6 +85,37 @@ class TestUserController (
             .expectComplete()
             .verify()
     }
+    @Test
+    fun `should not delete user if user does not exist`() {
+        userController
+            .deleteUser(user.emailId)
+        StepVerifier.create(userController.getUserById(user.emailId, response))
+            .expectComplete()
+            .verify()
+    }
+    @Test
+    fun `should create user if user does not exist`() {
+        userController
+            .createUser(user)
+        StepVerifier.create(userController.getUserById(user.emailId, response))
+            .expectNext(user)
+            .verifyComplete()
+    }
+    @Test
+    fun `should not create a user if user with that id already exist`() {
+        userRepository
+            .insert(user)
+            .block()
+        val otherUser = User(
+            emailId = user.emailId,
+            name = "Second account"
+        )
+        userController
+            .createUser(otherUser)
+        StepVerifier.create(userController.getUserById(user.emailId, response))
+            .expectNext(user)
+            .verifyComplete()
+    }
     companion object {
         private lateinit var mongoDBContainer: MongoDBContainer
 
