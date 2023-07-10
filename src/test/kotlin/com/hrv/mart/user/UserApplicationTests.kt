@@ -8,6 +8,7 @@ class UserApplicationTests {
 
     @Test
     fun contextLoads() {
+        main(emptyArray())
     }
 
 }
