@@ -3,15 +3,22 @@ package com.hrv.mart.user.controller
 import com.hrv.mart.user.repository.UserRepository
 import com.hrv.mart.user.service.UserService
 import com.hrv.mart.userlibrary.model.User
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.http.server.reactive.ServerHttpResponse
+import org.testcontainers.containers.MongoDBContainer
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
-class TestUserController {
-    private val userRepository = mock(UserRepository::class.java)
+@DataMongoTest
+class TestUserController (
+    private val userRepository: UserRepository
+){
     private val response = mock(ServerHttpResponse::class.java)
 
     private val userService = UserService(userRepository)
@@ -20,55 +27,33 @@ class TestUserController {
         emailId = "test@test.com",
         name = "Test User"
     )
-//    @Test
-//    fun `should create user and return OK() message when user is not present in database`() {
-//        doReturn(Mono.just(user))
-//            .`when`(userRepository)
-//            .insert(user)
-//
-//        StepVerifier.create(userController.createUser(user))
-//            .expectNext("User Created successfully")
-//            .verifyComplete()
-//
-//    }
-//    @Test
-//    fun `should return Error() message when user already exist`() {
-//        doReturn(Mono.error<Exception>(Exception("Duplicate Id")))
-//            .`when`(userRepository)
-//            .insert(user)
-//        StepVerifier.create(userController.createUser(user, response))
-//            .expectNext("Something went wrong")
-//            .verifyComplete()
-//    }
-//    @Test
-//    fun `should return Error() message when userRepository_save() return empty response`() {
-//        doReturn(Mono.empty<User>())
-//            .`when`(userRepository)
-//            .insert(user)
-//        StepVerifier.create(userController.createUser(user, response))
-//            .expectNext("Something went wrong")
-//            .verifyComplete()
-//    }
+    @BeforeEach
+    fun cleanDatabase() {
+        userRepository
+            .deleteAll()
+            .subscribe()
+    }
     @Test
     fun `should return user if user already exist in database`() {
-        doReturn(Mono.just(user))
-            .`when`(userRepository)
-            .findById(user.emailId)
+        userRepository
+            .insert(user)
+            .subscribe()
         StepVerifier.create(userController.getUserById(user.emailId, response))
             .expectNext(user)
             .verifyComplete()
     }
     @Test
     fun `should return empty response if user do not exist in database`() {
-        doReturn(Mono.empty<User>())
-            .`when`(userRepository)
-            .findById(user.emailId)
         StepVerifier.create(userController.getUserById(user.emailId, response))
             .expectComplete()
             .verify()
     }
     @Test
     fun `update user and return user if user exist in database`() {
+        userRepository
+            .insert(user)
+            .subscribe()
+
         val updatedUser = User(
             emailId = user.emailId,
             name = "Updated Test User"
@@ -96,25 +81,27 @@ class TestUserController {
             .expectComplete()
             .verify()
     }
-//    @Test
-//    fun `should delete user and return OK() message when user exist in database`() {
-//        doReturn(Mono.just(true))
-//            .`when`(userRepository)
-//            .existsById(user.emailId)
-//        doReturn(Mono.empty<Void>())
-//            .`when`(userRepository)
-//            .deleteById(user.emailId)
-//        StepVerifier.create(userController.deleteUser(user.emailId, response))
-//            .expectNext("User Deleted successfully")
-//            .verifyComplete()
-//    }
-//    @Test
-//    fun `should return error() message while deleting user when user does not exist in database `() {
-//        doReturn(Mono.just(false))
-//            .`when`(userRepository)
-//            .existsById(user.emailId)
-//        StepVerifier.create(userController.deleteUser(user.emailId, response))
-//            .expectNext("User not found")
-//            .verifyComplete()
-//    }
+    companion object {
+        private lateinit var mongoDBContainer: MongoDBContainer
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            mongoDBContainer = MongoDBContainer("mongo:latest")
+                .apply { withExposedPorts(27_017) }
+                .apply { start() }
+            mongoDBContainer
+                .withReuse(true)
+                .withAccessToHost(true)
+            System.setProperty("spring.data.mongodb.uri", "${mongoDBContainer.connectionString}/test")
+            System.setProperty("spring.data.mongodb.auto-index-creation", "true")
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun afterAll() {
+            mongoDBContainer.stop()
+        }
+    }
+
 }
