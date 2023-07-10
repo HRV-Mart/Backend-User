@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.5"
+    id("org.springframework.boot") version "3.1.1"
     id("io.spring.dependency-management") version "1.1.0"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
     id("jacoco")// This is to use Jacoco for coverage testing
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.spring") version "1.8.22"
 }
 
 group = "com.hrv.mart"
@@ -33,7 +33,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-//     to import formatting in config/detekt/detekt.yml
+    //import formatting in config/detekt/detekt.yml
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
@@ -42,6 +42,9 @@ dependencies {
     // Kafka
     implementation("org.springframework.kafka:spring-kafka")
     testImplementation("org.springframework.kafka:spring-kafka-test")
+    // Test-Container
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:mongodb")
 }
 
 tasks.withType<KotlinCompile> {
@@ -57,6 +60,7 @@ tasks.withType<Test> {
     finalizedBy("jacocoTestCoverageVerification")
 }
 detekt {
+    toolVersion = "1.22.0"
     config = files("configs/detekt/detekt.yml")
 }
 tasks.jacocoTestCoverageVerification {
@@ -65,9 +69,9 @@ tasks.jacocoTestCoverageVerification {
             excludes = listOf(
                 "com.hrv.mart.user.repository.UserRepository.kt.*"
             )
-//            limit {
-//                minimum = "0.9".toBigDecimal()
-//            }
+            limit {
+                minimum = "0.9".toBigDecimal()
+            }
         }
     }
 }
