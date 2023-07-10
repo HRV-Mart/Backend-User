@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.testcontainers.containers.MongoDBContainer
@@ -17,6 +18,7 @@ import reactor.test.StepVerifier
 
 @DataMongoTest
 class TestUserController (
+    @Autowired
     private val userRepository: UserRepository
 ){
     private val response = mock(ServerHttpResponse::class.java)
@@ -37,7 +39,7 @@ class TestUserController (
     fun `should return user if user already exist in database`() {
         userRepository
             .insert(user)
-            .subscribe()
+            .block()
         StepVerifier.create(userController.getUserById(user.emailId, response))
             .expectNext(user)
             .verifyComplete()
@@ -52,18 +54,12 @@ class TestUserController (
     fun `update user and return user if user exist in database`() {
         userRepository
             .insert(user)
-            .subscribe()
+            .block()
 
         val updatedUser = User(
             emailId = user.emailId,
             name = "Updated Test User"
         )
-        doReturn(Mono.just(user))
-            .`when`(userRepository)
-            .findById(user.emailId)
-        doReturn(Mono.just(updatedUser))
-            .`when`(userRepository)
-            .save(updatedUser)
         StepVerifier.create(userController.updateUser(updatedUser, response))
             .expectNext(updatedUser)
             .verifyComplete()
@@ -74,9 +70,6 @@ class TestUserController (
             emailId = user.emailId,
             name = "Updated Test User"
         )
-        doReturn(Mono.empty<User>())
-            .`when`(userRepository)
-            .findById(user.emailId)
         StepVerifier.create(userController.updateUser(updatedUser, response))
             .expectComplete()
             .verify()
