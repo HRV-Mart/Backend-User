@@ -38,10 +38,11 @@ jobs:
         with:
           java-version: '17'
 
-      - name: Set up Kotlin
-        uses: actions/setup-kotlin@v1
-        with:
-          kotlin-version: '1.5.30'
+      - name: Install Kotlin
+        run: |
+          curl -sSLO "https://github.com/JetBrains/kotlin/releases/download/v1.5.30/kotlin-compiler-1.5.30.zip"
+          unzip -q kotlin-compiler-1.5.30.zip
+          sudo mv kotlinc /usr/local/kotlin
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
